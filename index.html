@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canım Ablama Doğum Günü Kartı</title>
+    <style>
+        /* --- General and Layout Styles --- */
+        body {
+            background: #f7a9b4; /* Soft pink background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Comic Sans MS', cursive, sans-serif; /* Keeping the playful font */
+            overflow: hidden; /* Hide overflow for confetti effect */
+        }
+
+        .dg-keki {
+            text-align: center;
+            position: relative;
+            z-index: 10;
+            transition: opacity 1s ease-in-out;
+        }
+
+        h2 {
+            margin-top: 20px;
+            color: #fff;
+            text-align: center;
+            font-size: 2.5em;
+        }
+
+        p {
+            color: #fff;
+            font-size: 1.2em;
+            text-align: center;
+        }
+
+        /* --- Cake (Kek) Styles --- */
+        .kek {
+            width: 200px;
+            height: 100px;
+            background: #8b4c39; /* Chocolate brown */
+            border-radius: 25% 25% 10px 10px;
+            position: relative;
+            margin: auto;
+            box-shadow: inset 0 -15px #663024;
+            /* PASTA YAVAŞLATILDI: 1s'den 2s'ye çıkarıldı */
+            transition: all 2s ease-in-out; 
+            z-index: 5; /* Z-index ayarlandı */
+        }
+
+        .kek::before {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 40px;
+            background-color: #fff; /* White frosting */
+            border-radius: 25% 25% 50% 50%;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        /* --- Candle (Mum) Styles --- */
+        .mum {
+            width: 10px;
+            height: 40px;
+            background: #ff0800; /* Red candle */
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 3px;
+            z-index: 2;
+            transition: opacity 0.3s; /* For extinguishing */
+        }
+
+        /* --- Flame (Ates) Styles and Flicker Animation --- */
+        .ates {
+            width: 15px;
+            height: 15px;
+            background: #ffe345; /* Yellow flame */
+            border-radius: 50%;
+            position: absolute;
+            top: -38px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: flicker 0.5s infinite alternate;
+            z-index: 3;
+            box-shadow: 0 0 10px 2px rgba(255, 227, 69, 0.8);
+            transition: opacity 0.3s; /* For extinguishing */
+        }
+
+        @keyframes flicker {
+            from {
+                transform: translateX(-50%) scale(1);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(-50%) scale(1.2);
+                opacity: 0.7;
+            }
+        }
+
+        /* --- Extinguished State (Söndürülmüş Hali) --- */
+        .extinguished .ates {
+            opacity: 0;
+        }
+
+        .extinguished .mum {
+            opacity: 0.7; /* Candle slightly darker */
+        }
+
+        /* --- Button Styles --- */
+        #blow-button {
+            width: 200px;
+            height: 70px;
+            font-size: 25px;
+            border-radius: 30px;
+            background-color: rgb(167, 222, 247);
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 5px 0 #8cc7e0;
+            transition: all 0.2s;
+            position: absolute;
+            top: 400px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 15; /* Butonun üstte kalması için */
+        }
+
+        #blow-button:active {
+            box-shadow: 0 2px 0 #8cc7e0;
+            transform: translateX(-50%) translateY(3px);
+        }
+        
+        /* --- Confetti Styles --- */
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: transparent;
+            opacity: 0;
+            pointer-events: none;
+            border-radius: 50%;
+            /* KONFETİ SÜRESİ UZATILDI: 3s'den 5s'ye çıkarıldı */
+            animation: confetti-fall 5s ease-out forwards; 
+            z-index: 20;
+        }
+
+        @keyframes confetti-fall {
+            0% {
+                opacity: 1;
+                transform: translateY(0) rotate(0deg);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(100vh) rotate(1080deg); /* Daha çok dönme */
+            }
+        }
+
+        /* --- Slicing Animation (Dilimleme Animasyonu) --- */
+        .slice {
+            width: 100px;
+            height: 100px;
+            background: #8b4c39;
+            border-radius: 25% 25% 10px 10px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            /* PASTA YAVAŞLATILDI: 1s'den 2s'ye çıkarıldı */
+            transition: all 2s ease-in-out; 
+            opacity: 0;
+            z-index: 5;
+        }
+        
+        .slice::before {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 40px;
+            background-color: #fff;
+            border-radius: 25% 25% 50% 50%;
+            top: 0;
+            left: 0;
+        }
+
+        /* Animation class to move and fade slices */
+        .sliced-and-gone .kek {
+            opacity: 0; /* Hide the main cake */
+            transform: scale(0.1); /* Ana pastanın hızla kaybolmasını sağlar */
+        }
+        
+        .sliced-and-gone .slice.left {
+            opacity: 1;
+            /* PASTA DAHA UZAĞA VE YAVAŞÇA AYRILIYOR */
+            transform: translate(-300%, -150%) rotate(-15deg) scale(0.5); 
+        }
+        
+        .sliced-and-gone .slice.right {
+            opacity: 1;
+            /* PASTA DAHA UZAĞA VE YAVAŞÇA AYRILIYOR */
+            transform: translate(200%, -150%) rotate(15deg) scale(0.5); 
+        }
+
+        /* --- Video Container Styles --- */
+        #video-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0;
+            /* VİDEO GECİKMESİ UZATILDI: 1.5s'den 3s'ye çıkarıldı (animasyonun bitişinden sonra) */
+            transition: opacity 1.5s ease-in-out 3s; 
+            max-width: 90%;
+            max-height: 90%;
+            width: 600px; /* Example size */
+            height: 350px; /* Example size */
+        }
+
+        #video-container.show {
+            opacity: 1;
+            z-index: 30;
+        }
+
+        #birthday-video {
+            width: 100%;
+            height: 100%;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="dg-keki" id="card-content">
+        <div class="kek" id="cake">
+            <div class="mum" id="candle"></div>
+            <div class="ates" id="flame"></div>
+        </div>
+        
+        <button id="blow-button" onclick="blowOutCandle()">Üfle Bakayım (tıkla) 🌬️</button>
+        
+        <h2>İYİ Kİ DOĞDUN CANIM ABLAAAAAM!</h2>
+        <p>ablam artik 30 yasina daha yakin :/ </p>
+    </div>
+
+    <div class="slice left" id="slice-left"></div>
+    <div class="slice right" id="slice-right"></div>
+    
+    <div id="video-container">
+        <iframe id="birthday-video" 
+                src="video.mp4" 
+                frameborder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                allowfullscreen>
+        </iframe>
+    </div>
+
+    <script>
+        const cake = document.getElementById('cake');
+        const flame = document.getElementById('flame');
+        const candle = document.getElementById('candle');
+        const button = document.getElementById('blow-button');
+        const cardContent = document.getElementById('card-content');
+        const sliceLeft = document.getElementById('slice-left');
+        const sliceRight = document.getElementById('slice-right');
+        const videoContainer = document.getElementById('video-container');
+
+        // Function to create and launch confetti particles
+        function launchConfetti() {
+            const colors = ['#f00', '#0f0', '#00f', '#ff0', '#0ff', '#f0f', '#fff', '#ffa500'];
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                
+                // Random position and size
+                confetti.style.left = `${Math.random() * 100}vw`;
+                confetti.style.top = `${-20}px`; // Start above the screen
+                confetti.style.width = `${5 + Math.random() * 10}px`;
+                confetti.style.height = `${5 + Math.random() * 10}px`;
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                
+                // Random animation delay and duration for variation
+                confetti.style.animationDelay = `${Math.random() * 0.5}s`;
+                /* KONFETİ SÜRESİ UZATILDI: Maksimum 4 saniye yerine 5 saniye olacak şekilde ayarlandı */
+                confetti.style.animationDuration = `${3 + Math.random() * 2}s`; 
+                
+                document.body.appendChild(confetti);
+
+                // Clean up confetti elements after animation
+                confetti.addEventListener('animationend', () => {
+                    confetti.remove();
+                });
+            }
+        }
+
+        // Main function for the "blow out" action
+        function blowOutCandle() {
+            // 1. Disable button
+            button.disabled = true;
+            button.textContent = 'Üflendi! 🥳';
+
+            // 2. Extinguish the candle (mum sönsün)
+            flame.style.opacity = '0';
+            candle.classList.add('extinguished');
+            cake.classList.add('extinguished');
+
+            // 3. Launch Confetti (konfetiler patlasın)
+            // Konfeti fonksiyonu çağrıldı. Konfetiler 5 saniye boyunca düşmeye devam edecek.
+            launchConfetti();
+
+            // 4. Start slicing animation (pasta dilimlere bölünsün)
+            // Gecikme 1 saniyeden 1.5 saniyeye çıkarıldı.
+            setTimeout(() => {
+                // Position and show the slices
+                sliceLeft.style.opacity = '1';
+                sliceRight.style.opacity = '1';
+                
+                // Trigger the 'sliced-and-gone' animation
+                document.body.classList.add('sliced-and-gone');
+
+                // Move other elements slightly out of the way
+                cardContent.style.opacity = '0';
+
+            }, 1500); // 1.5 saniye bekleme
+
+            // 5. Hide the cake/slices and show the video
+            // Toplam süre: 1.5s (ilk gecikme) + 2s (animasyon süresi) + 0.5s (ek bekleme) = 4000ms.
+            // Bu sayede video pastadan sonra daha sakin bir şekilde ortaya çıkacak.
+            setTimeout(() => {
+                // Hide the old content entirely
+                cardContent.style.display = 'none';
+                sliceLeft.style.display = 'none';
+                sliceRight.style.display = 'none';
+
+                // Show the video container
+                videoContainer.classList.add('show');
+            }, 4000); // 4 saniye bekleme
+        }
+    </script>
+</body>
+</html>
